@@ -15,24 +15,23 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <title>Градиентный фон</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Темный градиентный фон</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
   <style>
-    /* Линейный градиент на весь экран */
+    /* Общие сбросы */
     html, body {
       height: 100%;
       margin: 0;
     }
 
+    /* Темный линейный градиент на весь экран */
     body {
-      /* пример линейного градиента слева направо */
-      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 50%, #6dd5ed 100%);
-      /* дополнительные полезные свойства */
-      background-attachment: fixed; /* фон не будет скроллиться */
+      background: linear-gradient(135deg, #0b1020 0%, #0f1724 35%, #111827 70%, #071025 100%);
+      background-attachment: fixed;
       background-repeat: no-repeat;
       background-size: cover;
-      font-family: Arial, sans-serif;
-      color: white;
+      color: #e6eef8;
+      font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -40,31 +39,69 @@
       padding: 2rem;
     }
 
-    /* Радиальный градиент — пример альтернативы */
-    .radial {
-      width: 80%;
-      max-width: 800px;
+    /* Внутренний блок с мягким радиальным свечением */
+    .panel {
+      width: 90%;
+      max-width: 900px;
       padding: 2rem;
-      border-radius: 12px;
-      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15), rgba(0,0,0,0.12) 40%, rgba(0,0,0,0.25) 100%);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      border-radius: 14px;
+      background: radial-gradient(1200px 600px at 10% 10%,
+                  rgba(255,255,255,0.03), rgba(255,255,255,0.01) 10%, transparent 40%),
+                  linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.25));
+      box-shadow: 0 8px 40px rgba(2,6,23,0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.03);
     }
 
     h1 {
-      margin: 0 0 0.5rem 0;
+      margin: 0 0 .5rem 0;
       font-size: 2rem;
+      color: #dbeafe;
     }
 
     p {
       margin: 0;
+      color: #bcd3f6;
       opacity: 0.95;
     }
+
+    /* Адаптивность для мелких экранов */
+    @media (max-width: 480px) {
+      h1 { font-size: 1.4rem; }
+      .panel { padding: 1.25rem; border-radius: 10px; }
+    }
   </style>
+  <script>
+    // Дополнительно блокируем жесты масштабирования на мобильных (попытка)
+    // note: многие современные браузеры игнорируют запрет масштабирования по соображениям доступности
+    (function() {
+      // Отключаем масштабирование через колесо с Ctrl и touch-пинч (частично)
+      window.addEventListener('wheel', function(e) {
+        if (e.ctrlKey) e.preventDefault();
+      }, { passive: false });
+
+      let lastTouchEnd = 0;
+      document.addEventListener('touchstart', function(e) {
+        if (e.touches && e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+
+      document.addEventListener('touchend', function(e) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          e.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, { passive: false });
+    })();
+  </script>
 </head>
 <body>
-  <div class="radial">
-    <h1>ЛИАНА СМОТРИИ</h1>
-    <p>хуй хуй хуй</p>
+  <div class="panel">
+    <h1>Темный градиентный фон</h1>
+    <p>Линейный градиент на body и мягкий радиальный эффект внутри блока. Масштабирование стараемся ограничить через meta и скрипты.</p>
   </div>
 </body>
 </html>
