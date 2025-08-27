@@ -11,97 +11,243 @@
 </body>
 </html>
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <title>Темный градиентный фон</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <style>
-    /* Общие сбросы */
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Мобильный мессенджер — тёмная тема</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#0f1724; --muted:#9aa6b2; --accent:#2b91ff;
+    --me-bg:linear-gradient(180deg,#093b57,#06324a); --you-bg:#0f1820; --glass:rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter, Roboto, "Helvetica Neue", Arial, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background:linear-gradient(135deg,#071025 0%, #0f1724 60%);color:#e6eef8}
+  .app{max-width:1100px;margin:0 auto;height:100vh;display:flex;gap:14px;padding:12px}
+  .sidebar{width:320px;background:var(--panel);border-radius:12px;padding:10px;box-shadow:0 6px 24px rgba(2,6,23,0.6);overflow:auto;transition:transform .28s ease,opacity .2s ease;will-change:transform,opacity}
+  .sidebar.hidden{transform:translateX(-120%);opacity:0}
+  .chat{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;cursor:pointer;transition:background .12s ease,transform .12s ease}
+  .chat:hover{transform:translateY(-2px)}
+  .chat.active{background:linear-gradient(90deg, rgba(43,145,255,0.08), transparent)}
+  .avatar{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7bd0ff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#02243a}
+  .chat .meta{font-size:13px;color:var(--muted)}
+  .main{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+  .header{height:68px;background:var(--panel);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 6px 20px rgba(2,6,23,0.5)}
+  .header .title{font-weight:600}
+  .messages{flex:1;padding:14px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+  .bubble{max-width:78%;padding:10px 12px;border-radius:14px;position:relative;box-shadow:0 6px 18px rgba(2,6,23,0.45);opacity:0;transform:translateY(8px);transition:opacity .24s ease,transform .24s ease}
+  .bubble.show{opacity:1;transform:translateY(0)}
+  .bubble.you{align-self:flex-start;background:var(--you-bg);color:var(--e,#e6eef8);border-bottom-left-radius:4px}
+  .bubble.me{align-self:flex-end;background:var(--me-bg);color:#d7f0ff;border-bottom-right-radius:4px}
+  .bubble .time{display:block;font-size:11px;color:var(--muted);margin-top:6px}
+  .footer{display:flex;gap:8px;padding:10px;background:var(--panel);border-radius:12px;align-items:center}
+  .input{flex:1;padding:10px 12px;border-radius:10px;border:0;background:transparent;color:inherit}
+  .btn{background:transparent;border:0;color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
+  .icon{width:36px;height:36px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center}
+  .controls{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .search{width:100%;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit;font-size:14px}
+  .small{font-size:13px;color:var(--muted)}
+  /* Mobile behaviour */
+  @media (max-width:860px){
+    .app{padding:8px}
+    .sidebar{position:fixed;left:8px;top:8px;bottom:8px;width:86%;max-width:360px;z-index:30}
+    .main{border-radius:12px}
+    .showSidebarBtn{display:block}
+    .backBtn{display:block}
+  }
+  .showSidebarBtn{display:none;background:transparent;border:0;color:var(--muted);cursor:pointer;padding:6px}
+  .backBtn{display:none;background:transparent;border:0;color:var(--muted);cursor:pointer;padding:6px}
+  /* subtle gradients and separators */
 
-    /* Темный линейный градиент на весь экран */
-    body {
-      background: linear-gradient(135deg, #0b1020 0%, #0f1724 35%, #111827 70%, #071025 100%);
-      background-attachment: fixed;
-      background-repeat: no-repeat;
-      background-size: cover;
-      color: #e6eef8;
-      font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-    }
-
-    /* Внутренний блок с мягким радиальным свечением */
-    .panel {
-      width: 90%;
-      max-width: 900px;
-      padding: 2rem;
-      border-radius: 14px;
-      background: radial-gradient(1200px 600px at 10% 10%,
-                  rgba(255,255,255,0.03), rgba(255,255,255,0.01) 10%, transparent 40%),
-                  linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.25));
-      box-shadow: 0 8px 40px rgba(2,6,23,0.7);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.03);
-    }
-
-    h1 {
-      margin: 0 0 .5rem 0;
-      font-size: 2rem;
-      color: #dbeafe;
-    }
-
-    p {
-      margin: 0;
-      color: #bcd3f6;
-      opacity: 0.95;
-    }
-
-    /* Адаптивность для мелких экранов */
-    @media (max-width: 480px) {
-      h1 { font-size: 1.4rem; }
-      .panel { padding: 1.25rem; border-radius: 10px; }
-    }
-  </style>
-  <script>
-    // Дополнительно блокируем жесты масштабирования на мобильных (попытка)
-    // note: многие современные браузеры игнорируют запрет масштабирования по соображениям доступности
-    (function() {
-      // Отключаем масштабирование через колесо с Ctrl и touch-пинч (частично)
-      window.addEventListener('wheel', function(e) {
-        if (e.ctrlKey) e.preventDefault();
-      }, { passive: false });
-
-      let lastTouchEnd = 0;
-      document.addEventListener('touchstart', function(e) {
-        if (e.touches && e.touches.length > 1) {
-          e.preventDefault();
-        }
-      }, { passive: false });
-
-      document.addEventListener('touchend', function(e) {
-        const now = Date.now();
-        if (now - lastTouchEnd <= 300) {
-          e.preventDefault();
-        }
-        lastTouchEnd = now;
-      }, { passive: false });
-    })();
-  </script>
+  .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.03),transparent);margin:8px 0;border-radius:2px}
+  /* smooth scrolling & touch optim */
+  .messages{ -webkit-overflow-scrolling: touch; scroll-behavior: smooth }
+</style>
 </head>
 <body>
-  <div class="panel">
-    <h1>Темный градиентный фон</h1>
-    <p>Линейный градиент на body и мягкий радиальный эффект внутри блока. Масштабирование стараемся ограничить через meta и скрипты.</p>
+<div class="app">
+  <div class="sidebar" id="sidebar">
+    <input class="search" id="search" placeholder="Поиск чатов">
+    <div class="sep"></div>
+    <div id="chats"></div>
   </div>
+
+  <div class="main" id="main">
+    <div class="header">
+      <button class="showSidebarBtn btn" id="openList" aria-label="Открыть список">☰</button>
+      <button class="backBtn btn" id="back" aria-label="Назад">←</button>
+      <div class="avatar" id="hdrAvatar">A</div>
+      <div>
+        <div class="title" id="hdrTitle">Выберите чат</div>
+        <div class="small" id="hdrSub">последняя активность</div>
+      </div>
+      <div class="controls" style="margin-left:auto">
+        <label class="small" style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="themeToggle"> Тёмная
+        </label>
+      </div>
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <form id="msgForm" class="footer" onsubmit="return false;">
+      <input class="input" name="msg" id="msgInput" placeholder="Написать сообщение..." autocomplete="off">
+      <button class="btn" id="sendBtn" aria-label="Отправить">➤</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Утилиты
+  const $ = (s, ctx=document) => ctx.querySelector(s);
+  const escapeHtml = s => (s+'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // Элементы
+  const chatsEl = $('#chats'), messagesEl = $('#messages'), sidebar = $('#sidebar');
+  const hdrAvatar = $('#hdrAvatar'), hdrTitle = $('#hdrTitle'), hdrSub = $('#hdrSub');
+  const openList = $('#openList'), backBtn = $('#back'), themeToggle = $('#themeToggle');
+  const msgForm = $('#msgForm'), msgInput = $('#msgInput'), sendBtn = $('#sendBtn');
+
+  // Данные для демо
+  const chats = [
+    {id:'1', name:'Алексей', last:'Как продвигается?', time:'10:03'},
+    {id:'2', name:'Марина', last:'Отправил, проверь', time:'09:20'},
+    {id:'3', name:'Работа', last:'Звонок завтра', time:'вчера'}
+  ];
+  const history = {
+    '1':[ {who:'you',text:'Привет! Как дела?',time:'10:02'}, {who:'me',text:'Всё отлично, работаю над небольшим проектом.',time:'10:03'} ],
+    '2':[ {who:'you',text:'Прислал файл, посмотри пожалуйста.',time:'09:12'}, {who:'me',text:'Скачал, спасибо! Завтра гляну подробнее.',time:'09:20'} ],
+    '3':[ {who:'you',text:'Завтра отчет по проекту.',time:'вчера'}, {who:'me',text:'Понял, подготовлю.',time:'вчера'} ]
+  };
+
+  // Тема из localStorage
+  if(localStorage.getItem('theme')==='light'){ document.documentElement.style.setProperty('--bg','#f6f9fb'); document.body.classList.remove('dark') } else { /* default dark */ document.body.classList.add('dark') }
+  if(localStorage.getItem('theme')==='light') themeToggle.checked = false; else themeToggle.checked = true;
+
+  // Рендер списка чатов
+  function renderChats(list){
+    chatsEl.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    list.forEach(c=>{
+      const el = document.createElement('div');
+      el.className = 'chat';
+      el.dataset.id = c.id;
+      el.innerHTML = '<div class="avatar">'+escapeHtml(c.name.charAt(0))+'</div><div style="flex:1"><div style="font-weight:600">'+escapeHtml(c.name)+'</div><div class="meta">'+escapeHtml(c.last)+'</div></div><div class="meta">'+escapeHtml(c.time)+'</div>';
+      frag.appendChild(el);
+    });
+    chatsEl.appendChild(frag);
+  }
+  renderChats(chats);
+
+  // Плавный показ сообщений
+  function showMessages(id){
+    messagesEl.innerHTML = '';
+    const msgs = history[id] || [];
+    const frag = document.createDocumentFragment();
+    msgs.forEach((m,i)=>{
+      const b = document.createElement('div');
+      b.className = 'bubble ' + (m.who==='me'?'me':'you');
+      b.innerHTML = '<div>'+escapeHtml(m.text)+'</div><span class="time">'+escapeHtml(m.time)+'</span>';
+      frag.appendChild(b);
+
+      setTimeout(()=>b.classList.add('show'), 30*i);
+    });
+    messagesEl.appendChild(frag);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  // Выбор чата — делегирование
+  chatsEl.addEventListener('click', e=>{
+    const item = e.target.closest('.chat');
+    if(!item) return;
+    [...chatsEl.querySelectorAll('.chat')].forEach(c=>c.classList.remove('active'));
+    item.classList.add('active');
+    const chat = chats.find(c=>c.id===item.dataset.id);
+    hdrAvatar.textContent = item.querySelector('.avatar').textContent;
+    hdrTitle.textContent = chat.name;
+    hdrSub.textContent = chat.last + ' • ' + chat.time;
+    showMessages(chat.id);
+
+    if(window.innerWidth <= 860){
+      sidebar.classList.add('hidden');
+    }
+  });
+
+  // Мобильные кнопки
+  openList.addEventListener('click', ()=> sidebar.classList.remove('hidden'));
+  backBtn.addEventListener('click', ()=> sidebar.classList.remove('hidden'));
+
+  // Поиск
+  $('#search').addEventListener('input', e=>{
+    const q = e.target.value.toLowerCase().trim();
+    renderChats(chats.filter(c=>c.name.toLowerCase().includes(q) || c.last.toLowerCase().includes(q)));
+  });
+
+  // Отправка сообщения
+  msgForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    const v = msgInput.value.trim();
+    if(!v) return;
+    const el = document.createElement('div');
+    el.className = 'bubble me';
+    el.innerHTML = '<div>'+escapeHtml(v)+'</div><span class="time">только что</span>';
+    messagesEl.appendChild(el);
+    setTimeout(()=>el.classList.add('show'),10);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    msgInput.value = '';
+    // Добавляем в историю (локально)
+    const active = chatsEl.querySelector('.chat.active');
+    if(active){
+      const id = active.dataset.id;
+      history[id] = history[id] || [];
+      history[id].push({who:'me',text:v,time:'только что'});
+      // обновим превью в списке
+      const chat = chats.find(c=>c.id===id);
+      if(chat){ chat.last = v; chat.time = 'только что'; renderChats(chats); // восстановим активный
+        const same = [...chatsEl.querySelectorAll('.chat')].find(x=>x.dataset.id===id);
+        if(same) same.classList.add('active');
+      }
+    }
+  });
+
+  sendBtn.addEventListener('click', ()=> msgForm.dispatchEvent(new Event('submit')));
+
+  // Тема переключатель
+  themeToggle.addEventListener('change', e=>{
+    if(e.target.checked){
+      document.body.classList.add('dark'); localStorage.setItem('theme','dark');
+    } else {
+      document.body.classList.remove('dark'); localStorage.setItem('theme','light');
+    }
+  });
+
+  // Инициализация: выбираем первый чат
+  const first = chatsEl.querySelector('.chat');
+  if(first){ first.classList.add('active'); first.click(); }
+
+  // Resize: показать сайдбар на десктопе
+  window.addEventListener('resize', ()=>{
+    if(window.innerWidth > 860){ sidebar.classList.remove('hidden') }
+  });
+
+  // Улучшения мобильной производительности
+  // делаем touch-action и passive Listeners где возможно (упрощённо)
+  document.addEventListener('touchstart', ()=>{}, {passive:true});
+  messagesEl.addEventListener('scroll', ()=>{}, {passive:true});
+
+  // Блокировка пинч/двойного тап масштабирования (частично)
+  (function(){
+    let lastTouchEnd = 0;
+    document.addEventListener('touchstart', function(e){
+      if(e.touches && e.touches.length>1) e.preventDefault();
+    }, {passive:false});
+    document.addEventListener('touchend', function(e){
+      const now = Date.now();
+      if(now - lastTouchEnd <= 300) e.preventDefault();
+      lastTouchEnd = now;
+    }, {passive:false});
+  })();
+</script>
 </body>
 </html>
