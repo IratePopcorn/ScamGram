@@ -1,0 +1,26 @@
+body {
+    background: #000;
+    font-size: 15pt;
+    background: radial-gradient(circle at center, #1A1A1A, #070707);
+}
+
+
+
+.round {
+    padding: 17px 100px;
+    background-color: #804DFF;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 20px auto;
+    margin-top: 30pc;
+}
+        
+.rounded-button:hover {
+    background-color: #6139C4;
+}
